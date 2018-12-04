@@ -25,19 +25,25 @@ type vaultPath struct {
 	Field string
 }
 
+func usage(msg string) {
+	println(msg)
+	rconfig.Usage()
+	os.Exit(1)
+}
+
 func config() {
 	rconfig.Parse(&cfg)
 
 	if cfg.VaultToken == "" {
-		log.Fatalf("No vault token given")
+		usage("No vault token given")
 	}
 
 	if cfg.TemplateFile == "" {
-		log.Fatalf("No template file given")
+		usage("No template file given")
 	}
 
 	if cfg.OutputFile == "" {
-		log.Fatalf("No output file given")
+		usage("No output file given")
 	}
 }
 
