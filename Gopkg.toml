@@ -1,0 +1,11 @@
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  name = "github.com/Luzifer/rconfig"
+  version = "2.2.0"
+
+[[constraint]]
+  name = "github.com/hashicorp/vault"
+  version = "1.0.0"
