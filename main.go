@@ -14,8 +14,8 @@ import (
 var (
 	cfg = struct {
 		VaultEndpoint string `flag:"vault,v" env:"VAULT_ADDR" default:"https://127.0.0.1:8200" description:"vault API endpoint"`
-		VaultToken    string `flag:"vault-token,t" env:"VAULT_TOKEN" description:"The vault token to authenticate"`
-		TemplateFile  string `flag:"template" env:"TEMPLATE_FILE" description:"The template file to render"`
+		VaultTokenFile    string `flag:"vault-token-file,f" env:"VAULT_TOKEN_FILE" description:"The file which contains the vault token"`
+		TemplateFile  string `flag:"template,t" env:"TEMPLATE_FILE" description:"The template file to render"`
 		OutputFile    string `flag:"output,o" env:"OUTPUT_FILE" description:"The output file"`
 	}{}
 )
@@ -34,8 +34,8 @@ func usage(msg string) {
 func config() {
 	rconfig.Parse(&cfg)
 
-	if cfg.VaultToken == "" {
-		usage("No vault token given")
+	if cfg.VaultTokenFile == "" {
+		usage("No vault token file given")
 	}
 
 	if cfg.TemplateFile == "" {
@@ -88,7 +88,13 @@ func main() {
 		log.Fatalf("Unable to create client: %s", err)
 	}
 
-	client.SetToken(cfg.VaultToken)
+	vaultToken, err := ioutil.ReadFile(cfg.VaultTokenFile)
+
+	if err != nil {
+		log.Fatalf("Unable to read vault token file: %s", err)
+	}
+
+	client.SetToken(string(vaultToken))
 
 	templateContent, err := ioutil.ReadFile(cfg.TemplateFile)
 
