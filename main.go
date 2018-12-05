@@ -94,7 +94,7 @@ func main() {
 		log.Fatalf("Unable to read vault token file: %s", err)
 	}
 
-	client.SetToken(string(vaultToken))
+	client.SetToken(strings.TrimSpace(string(vaultToken)))
 
 	templateContent, err := ioutil.ReadFile(cfg.TemplateFile)
 
