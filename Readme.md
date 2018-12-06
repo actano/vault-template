@@ -25,11 +25,11 @@ Usage of ./vault-template:
 The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism. `vault-env` provides a special function for specifying secrets in the template:
 
 ```gotemplate
-mySecretName = {{ vault "secret/mySecret#name" }}
-mySecretPassword = {{ vault "secret/mySecret#password" }}
+mySecretName = {{ vault "secret/mySecret" "name" }}
+mySecretPassword = {{ vault "secret/mySecret" "password" }}
 ```
 
-The `vault` function takes a string parameter which specifies the path to the secret and the field inside to return. The format is `<path to secret>#<field>`.
+The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
 
 If the secret was created with `vault write secret/mySecret name=john password=secret` the resulting file would be:
 

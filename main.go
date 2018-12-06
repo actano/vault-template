@@ -20,11 +20,6 @@ var (
 	}{}
 )
 
-type vaultPath struct {
-	Path string
-	Field string
-}
-
 func usage(msg string) {
 	println(msg)
 	rconfig.Usage()
@@ -47,31 +42,17 @@ func config() {
 	}
 }
 
-func parsePath(path string) vaultPath {
-	split := strings.Split(path, "#")
-
-	if len(split) != 2 {
-		log.Fatalf("Unable to parse path %s", path)
-	}
-
-	return vaultPath{
-		Path: split[0],
-		Field: split[1],
-	}
-}
-
-func querySecret(client *api.Client, queryPath string) string {
-	path := parsePath(queryPath)
-	secret, err := client.Logical().Read(path.Path)
+func querySecret(client *api.Client, path string, field string) string {
+	secret, err := client.Logical().Read(path)
 
 	if err != nil {
 		log.Fatalf("Unable to read secret: %s", err)
 	}
 
-	secretValue, ok := secret.Data[path.Field]
+	secretValue, ok := secret.Data[field]
 
 	if !ok {
-		log.Fatalf("Secrect at path '%s' has no field '%s'", path.Path, path.Field)
+		log.Fatalf("Secrect at path '%s' has no field '%s'", path, field)
 	}
 
 	return secretValue.(string)
@@ -102,8 +83,8 @@ func main() {
 		log.Fatalf("Unable to read template file: %s", err)
 	}
 
-	query := func(queryPath string) string {
-		return querySecret(client, queryPath)
+	query := func(path string, field string) string {
+		return querySecret(client, path, field)
 	}
 
 	funcMap := template.FuncMap{
