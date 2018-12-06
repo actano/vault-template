@@ -13,10 +13,10 @@ import (
 
 var (
 	cfg = struct {
-		VaultEndpoint string `flag:"vault,v" env:"VAULT_ADDR" default:"https://127.0.0.1:8200" description:"vault API endpoint"`
-		VaultTokenFile    string `flag:"vault-token-file,f" env:"VAULT_TOKEN_FILE" description:"The file which contains the vault token"`
-		TemplateFile  string `flag:"template,t" env:"TEMPLATE_FILE" description:"The template file to render"`
-		OutputFile    string `flag:"output,o" env:"OUTPUT_FILE" description:"The output file"`
+		VaultEndpoint  string `flag:"vault,v" env:"VAULT_ADDR" default:"https://127.0.0.1:8200" description:"Vault API endpoint. Also configurable via VAULT_ADDR."`
+		VaultTokenFile string `flag:"vault-token-file,f" env:"VAULT_TOKEN_FILE" description:"The file which contains the vault token. Also configurable via VAULT_TOKEN_FILE."`
+		TemplateFile   string `flag:"template,t" env:"TEMPLATE_FILE" description:"The template file to render. Also configurable via TEMPLATE_FILE."`
+		OutputFile     string `flag:"output,o" env:"OUTPUT_FILE" description:"The output file. Also configurable via OUTPUT_FILE."`
 	}{}
 )
 
