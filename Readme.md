@@ -9,10 +9,15 @@ Render templated config files with secrets from [HashiCorp Vault](https://www.va
 
 ```text
 Usage of ./vault-template:
-  -o, --output string             The output file. Also configurable via OUTPUT_FILE.
-  -t, --template string           The template file to render. Also configurable via TEMPLATE_FILE.
-  -v, --vault string              Vault API endpoint. Also configurable via VAULT_ADDR. (default "http://127.0.0.1:8200")
-  -f, --vault-token-file string   The file which contains the vault token. Also configurable via VAULT_TOKEN_FILE.
+  -o, --output string             The output file.
+                                  Also configurable via OUTPUT_FILE.
+  -t, --template string           The template file to render.
+                                  Also configurable via TEMPLATE_FILE.
+  -v, --vault string              Vault API endpoint.
+                                  Also configurable via VAULT_ADDR.
+                                  (default "http://127.0.0.1:8200")
+  -f, --vault-token-file string   The file which contains the vault token.
+                                  Also configurable via VAULT_TOKEN_FILE.
 ```
 
 ## Template
