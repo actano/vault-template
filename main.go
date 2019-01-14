@@ -4,11 +4,10 @@ import (
 	"bytes"
 	"github.com/Luzifer/rconfig"
 	"github.com/Masterminds/sprig"
-	"github.com/hashicorp/vault/api"
+	"github.com/actano/vault-template/api"
 	"io/ioutil"
 	"log"
 	"os"
-	"strings"
 	"text/template"
 )
 
@@ -43,32 +42,32 @@ func config() {
 	}
 }
 
-func querySecret(client *api.Client, path string, field string) string {
-	secret, err := client.Logical().Read(path)
+func renderTemplate(vaultClient api.VaultClient, templateContent string) (*bytes.Buffer, error) {
+	funcMap := template.FuncMap{
+		"vault": vaultClient.QuerySecret,
+	}
+
+	tmpl, err := template.
+		New("template").
+		Funcs(sprig.TxtFuncMap()).
+		Funcs(funcMap).
+		Parse(templateContent)
 
 	if err != nil {
-		log.Fatalf("Unable to read secret: %s", err)
+		return nil, err
 	}
 
-	secretValue, ok := secret.Data[field]
+	var outputBuffer bytes.Buffer
 
-	if !ok {
-		log.Fatalf("Secrect at path '%s' has no field '%s'", path, field)
+	if err := tmpl.Execute(&outputBuffer, nil); err != nil {
+		return nil, err
 	}
 
-	return secretValue.(string)
+	return &outputBuffer, nil
 }
 
 func main() {
 	config()
-
-	client, err := api.NewClient(&api.Config{
-		Address: cfg.VaultEndpoint,
-	})
-
-	if err != nil {
-		log.Fatalf("Unable to create client: %s", err)
-	}
 
 	vaultToken, err := ioutil.ReadFile(cfg.VaultTokenFile)
 
@@ -76,7 +75,11 @@ func main() {
 		log.Fatalf("Unable to read vault token file: %s", err)
 	}
 
-	client.SetToken(strings.TrimSpace(string(vaultToken)))
+	vaultClient, err := api.NewVaultClient(cfg.VaultEndpoint, string(vaultToken))
+
+	if err != nil {
+		log.Fatalf("Unable to create vault client: %s", err)
+	}
 
 	templateContent, err := ioutil.ReadFile(cfg.TemplateFile)
 
@@ -84,28 +87,10 @@ func main() {
 		log.Fatalf("Unable to read template file: %s", err)
 	}
 
-	query := func(path string, field string) string {
-		return querySecret(client, path, field)
-	}
-
-	funcMap := template.FuncMap{
-		"vault": query,
-	}
-
-	tmpl, err := template.
-		New("template").
-		Funcs(sprig.TxtFuncMap()).
-		Funcs(funcMap).
-		Parse(string(templateContent))
+	outputBuffer, err := renderTemplate(vaultClient, string(templateContent))
 
 	if err != nil {
-		log.Fatalf("Unable to create template: %s", err)
-	}
-
-	var outputBuffer bytes.Buffer
-
-	if err := tmpl.Execute(&outputBuffer, nil); err != nil {
-		log.Fatalf("Unable to execute template: %s", err)
+		log.Fatalf("Unable to render template: %s", err)
 	}
 
 	outputFile, err := os.Create(cfg.OutputFile)
