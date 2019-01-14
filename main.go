@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"github.com/Luzifer/rconfig"
+	"github.com/Masterminds/sprig"
 	"github.com/hashicorp/vault/api"
 	"io/ioutil"
 	"log"
@@ -91,7 +92,11 @@ func main() {
 		"vault": query,
 	}
 
-	tmpl, err := template.New("template").Funcs(funcMap).Parse(string(templateContent))
+	tmpl, err := template.
+		New("template").
+		Funcs(sprig.TxtFuncMap()).
+		Funcs(funcMap).
+		Parse(string(templateContent))
 
 	if err != nil {
 		log.Fatalf("Unable to create template: %s", err)
