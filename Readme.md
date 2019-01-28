@@ -20,6 +20,8 @@ Usage of ./vault-template:
                                   Also configurable via VAULT_TOKEN_FILE.
 ```
 
+A [docker image is availabe on Dockerhub.](https://hub.docker.com/r/rplan/vault-template)
+
 ## Template
 
 The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism. `vault-env` provides a special function for specifying secrets in the template:
