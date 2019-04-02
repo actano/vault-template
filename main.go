@@ -27,7 +27,11 @@ func usage(msg string) {
 }
 
 func config() {
-	rconfig.Parse(&cfg)
+	err := rconfig.Parse(&cfg)
+
+	if err != nil {
+		log.Fatalf("Error while parsing the command line arguments: %s", err)
+	}
 
 	if cfg.VaultTokenFile == "" {
 		usage("No vault token file given")
