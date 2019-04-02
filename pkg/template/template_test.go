@@ -1,4 +1,4 @@
-package main
+package template
 
 import (
 	"github.com/actano/vault-template/mocks/api"
@@ -12,9 +12,9 @@ func TestRenderTemplate(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockVaulClient := api.NewMockVaultClient(mockCtrl)
+	mockVaultClient := api.NewMockVaultClient(mockCtrl)
 
-	mockVaulClient.
+	mockVaultClient.
 		EXPECT().
 		QuerySecret("secret/my/test/secret", "field1").
 		Return("secret1", nil).
@@ -22,19 +22,23 @@ func TestRenderTemplate(t *testing.T) {
 
 	template := "The secret is '{{ vault \"secret/my/test/secret\" \"field1\" }}'."
 
-	result, err := renderTemplate(mockVaulClient, template)
+	renderer := VaultTemplateRenderer{
+		vaultClient: mockVaultClient,
+	}
+
+	result, err := renderer.RenderTemplate(template)
 
 	assert.NilError(t, err)
-	assert.Equal(t, result.String(), "The secret is 'secret1'.")
+	assert.Equal(t, result, "The secret is 'secret1'.")
 }
 
 func TestRenderTemplateQueryError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockVaulClient := api.NewMockVaultClient(mockCtrl)
+	mockVaultClient := api.NewMockVaultClient(mockCtrl)
 
-	mockVaulClient.
+	mockVaultClient.
 		EXPECT().
 		QuerySecret("secret/my/test/secret", "field1").
 		Return("", errors.New("test error")).
@@ -42,7 +46,11 @@ func TestRenderTemplateQueryError(t *testing.T) {
 
 	template := "The secret is '{{ vault \"secret/my/test/secret\" \"field1\" }}'."
 
-	_, err := renderTemplate(mockVaulClient, template)
+	renderer := VaultTemplateRenderer{
+		vaultClient: mockVaultClient,
+	}
+
+	_, err := renderer.RenderTemplate(template)
 
 	assert.Assert(t, err != nil)
 }

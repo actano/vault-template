@@ -1,14 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"github.com/Luzifer/rconfig"
-	"github.com/Masterminds/sprig"
-	"github.com/actano/vault-template/api"
+	"github.com/actano/vault-template/pkg/template"
 	"io/ioutil"
 	"log"
 	"os"
-	"text/template"
 )
 
 var (
@@ -46,30 +43,6 @@ func config() {
 	}
 }
 
-func renderTemplate(vaultClient api.VaultClient, templateContent string) (*bytes.Buffer, error) {
-	funcMap := template.FuncMap{
-		"vault": vaultClient.QuerySecret,
-	}
-
-	tmpl, err := template.
-		New("template").
-		Funcs(sprig.TxtFuncMap()).
-		Funcs(funcMap).
-		Parse(templateContent)
-
-	if err != nil {
-		return nil, err
-	}
-
-	var outputBuffer bytes.Buffer
-
-	if err := tmpl.Execute(&outputBuffer, nil); err != nil {
-		return nil, err
-	}
-
-	return &outputBuffer, nil
-}
-
 func main() {
 	config()
 
@@ -79,10 +52,10 @@ func main() {
 		log.Fatalf("Unable to read vault token file: %s", err)
 	}
 
-	vaultClient, err := api.NewVaultClient(cfg.VaultEndpoint, string(vaultToken))
+	renderer, err := template.NewVaultTemplateRenderer(string(vaultToken), cfg.VaultEndpoint)
 
 	if err != nil {
-		log.Fatalf("Unable to create vault client: %s", err)
+		log.Fatalf("Unable to create renderer: %s", err)
 	}
 
 	templateContent, err := ioutil.ReadFile(cfg.TemplateFile)
@@ -91,7 +64,7 @@ func main() {
 		log.Fatalf("Unable to read template file: %s", err)
 	}
 
-	outputBuffer, err := renderTemplate(vaultClient, string(templateContent))
+	renderedContent, err := renderer.RenderTemplate(string(templateContent))
 
 	if err != nil {
 		log.Fatalf("Unable to render template: %s", err)
@@ -110,7 +83,7 @@ func main() {
 		}
 	}()
 
-	_, err = outputFile.Write(outputBuffer.Bytes())
+	_, err = outputFile.Write([]byte(renderedContent))
 
 	if err != nil {
 		log.Fatalf("Error while writing the output file: %s", err)
