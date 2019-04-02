@@ -99,7 +99,16 @@ func main() {
 		log.Fatalf("Unable to write output file: %s", err)
 	}
 
-	defer outputFile.Close()
+	defer func() {
+		err := outputFile.Close()
+		if err != nil {
+			log.Fatalf("Error while closing the output file: %s", err)
+		}
+	}()
 
-	outputFile.Write(outputBuffer.Bytes())
+	_, err = outputFile.Write(outputBuffer.Bytes())
+
+	if err != nil {
+		log.Fatalf("Error while writing the output file: %s", err)
+	}
 }
