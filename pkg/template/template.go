@@ -25,7 +25,8 @@ func NewVaultTemplateRenderer(vaultToken, vaultEndpoint string) (*VaultTemplateR
 
 func (v *VaultTemplateRenderer) RenderTemplate(templateContent string) (string, error) {
 	funcMap := template.FuncMap{
-		"vault": v.vaultClient.QuerySecret,
+		"vault":    v.vaultClient.QuerySecret,
+		"vaultMap": v.vaultClient.QuerySecretMap,
 	}
 
 	tmpl, err := template.

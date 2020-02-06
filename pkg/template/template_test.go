@@ -20,6 +20,12 @@ func TestRenderTemplate(t *testing.T) {
 		Return("secret1", nil).
 		Times(1)
 
+    mockVaultClient.
+		EXPECT().
+		QuerySecretMap("secret/my/test/secret").
+		Return(map[string]interface{}{"field1": "secret1"}, nil).
+		Times(1)
+
 	template := "The secret is '{{ vault \"secret/my/test/secret\" \"field1\" }}'."
 
 	renderer := VaultTemplateRenderer{
@@ -42,6 +48,12 @@ func TestRenderTemplateQueryError(t *testing.T) {
 		EXPECT().
 		QuerySecret("secret/my/test/secret", "field1").
 		Return("", errors.New("test error")).
+		Times(1)
+
+    mockVaultClient.
+		EXPECT().
+		QuerySecretMap("secret/my/test/secret").
+		Return(map[string]interface{}, errors.New("test error")).
 		Times(1)
 
 	template := "The secret is '{{ vault \"secret/my/test/secret\" \"field1\" }}'."
