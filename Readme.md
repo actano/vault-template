@@ -45,3 +45,5 @@ mySecretPassword = secret
 mySecretName: john
 mySecretPassword: secret
 ```
+
+Also it is possible to use environment variables like `{{ .STAGE }}`.
