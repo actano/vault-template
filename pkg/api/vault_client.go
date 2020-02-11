@@ -39,6 +39,9 @@ func (c *vaultClient) QuerySecretMap(path string) (map[string]interface{}, error
 	if err != nil {
 		return map[string]interface{}{}, err
 	}
+    if secret == nil {
+        return map[string]interface{}{}, fmt.Errorf("path '%s' is not found", path)
+    }
 
 	return secret.Data, nil
 }
