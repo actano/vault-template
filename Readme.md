@@ -24,26 +24,37 @@ A [docker image is availabe on Dockerhub.](https://hub.docker.com/r/rplan/vault-
 
 ## Template
 
-The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism. `vault-env` provides a special function for specifying secrets in the template:
+First of all, suppose that the secret was created with `vault write secret/mySecret name=john password=secret`.
+
+The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism.
+
+Currently vault-template can render two functions:
+- `vault`
+- `vaultMap`
+
+Also it is possible to use environment variables like `{{ .STAGE }}`.
+
+The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
 
 ```gotemplate
 mySecretName = {{ vault "secret/mySecret" "name" }}
 mySecretPassword = {{ vault "secret/mySecret" "password" }}
+```
+
+```text
+mySecretName = john
+mySecretPassword = secret
+```
+
+The `vaultMap` function takes one string parameter which specify the path to the secret to return.
+
+```gotemplate
 {{ range $name, $secret := vaultMap "secret/mySecret"}}
 {{ $name }}: {{ $secret }}
 {{- end }}
 ```
 
-The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
-The `vaultMap` function takes one string parameter which specify the path to the secret to return.
-
-If the secret was created with `vault write secret/mySecret name=john password=secret` the resulting file would be:
-
 ```text
-mySecretName = john
-mySecretPassword = secret
 name: john
 password: secret
 ```
-
-Also it is possible to use environment variables like `{{ .STAGE }}`.
