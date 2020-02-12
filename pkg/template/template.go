@@ -55,8 +55,8 @@ func envToMap() (map[string]string) {
     envMap := map[string]string{}
 
     for _, v := range os.Environ() {
-        split_v := strings.Split(v, "=")
-        envMap[split_v[0]] = split_v[1]
+        splitV := strings.Split(v, "=")
+        envMap[splitV[0]] = splitV[1]
     }
 
     return envMap

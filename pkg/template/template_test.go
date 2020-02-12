@@ -53,7 +53,7 @@ func TestRenderTemplateQueryError(t *testing.T) {
     mockVaultClient.
 		EXPECT().
 		QuerySecretMap("secret/my/test/secret").
-		Return(map[string]interface{}, errors.New("test error")).
+		Return(nil, errors.New("test error")).
 		Times(1)
 
 	template := "The secret is '{{ vault \"secret/my/test/secret\" \"field1\" }}'."

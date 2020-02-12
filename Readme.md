@@ -42,8 +42,8 @@ If the secret was created with `vault write secret/mySecret name=john password=s
 ```text
 mySecretName = john
 mySecretPassword = secret
-mySecretName: john
-mySecretPassword: secret
+name: john
+password: secret
 ```
 
 Also it is possible to use environment variables like `{{ .STAGE }}`.

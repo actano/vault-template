@@ -37,10 +37,10 @@ func (c *vaultClient) QuerySecretMap(path string) (map[string]interface{}, error
 	secret, err := c.apiClient.Logical().Read(path)
 
 	if err != nil {
-		return map[string]interface{}{}, err
+		return nil, err
 	}
     if secret == nil {
-        return map[string]interface{}{}, fmt.Errorf("path '%s' is not found", path)
+        return nil, fmt.Errorf("path '%s' is not found", path)
     }
 
 	return secret.Data, nil
