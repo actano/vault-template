@@ -12,6 +12,7 @@ RUN dep ensure --vendor-only
 
 # build binary
 COPY . ./
+#RUN CGO_ENABLED=0 GOOS=linux go test ./...
 RUN CGO_ENABLED=0 GOOS=linux go build -o /vault-template
 
 FROM scratch
