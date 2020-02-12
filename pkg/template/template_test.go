@@ -20,7 +20,7 @@ func TestRenderTemplate(t *testing.T) {
 		Return("secret1", nil).
 		Times(1)
 
-    mockVaultClient.
+	mockVaultClient.
 		EXPECT().
 		QuerySecretMap("secret/my/test/secret").
 		Return(map[string]interface{}{"field1": "secret1"}, nil).
@@ -50,7 +50,7 @@ func TestRenderTemplateQueryError(t *testing.T) {
 		Return("", errors.New("test error")).
 		Times(1)
 
-    mockVaultClient.
+	mockVaultClient.
 		EXPECT().
 		QuerySecretMap("secret/my/test/secret").
 		Return(nil, errors.New("test error")).

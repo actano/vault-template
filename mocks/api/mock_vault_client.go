@@ -31,6 +31,7 @@ func NewMockVaultClient(ctrl *gomock.Controller) *MockVaultClient {
 func (m *MockVaultClient) EXPECT() *MockVaultClientMockRecorder {
 	return m.recorder
 }
+
 // QuerySecretMap mocks base method
 func (m *MockVaultClient) QuerySecretMap(arg0 string) (map[string]interface{}, error) {
 	m.ctrl.T.Helper()
