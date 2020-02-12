@@ -58,3 +58,31 @@ The `vaultMap` function takes one string parameter which specify the path to the
 name: john
 password: secret
 ```
+
+More real example:
+
+```gotemplate
+---
+# Common vars
+{{- $customer    := .CUSTOMER }}
+{{- $stage       := .STAGE }}
+{{- $project     := .PROJECT }}
+{{- $postgres    := print "kv/data/" $customer "/" $stage "/" $project "/postgres" }}
+{{- $postgresMap := vaultMap $postgres }}
+
+postgresql:
+  postgresqlUsername: {{ $postgresMap.data.user }}
+  postgresqlPassword: {{ $postgresMap.data.password }}
+  postgresqlDatabase: {{ $postgresMap.data.db }}
+
+app:
+  postgres:
+{{ range $name, $secret := $postgresMap }}
+    {{ $name }}: {{ $secret }}
+{{- end }}
+```
+
+And command that use this template in kubernetes:
+```
+CUSTOMER=internal STAGE=test PROJECT=myprj vault-template -o values.yaml -t values.tmpl -v "http://vault.default.svc.cluster.local:8200" -f token
+```
