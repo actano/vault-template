@@ -8,6 +8,7 @@ import (
 
 type VaultClient interface {
 	QuerySecret(path string, field string) (string, error)
+	QuerySecretMap(path string) (map[string]interface{}, error)
 }
 
 type vaultClient struct {
@@ -30,6 +31,19 @@ func NewVaultClient(vaultEndpoint string, vaultToken string) (VaultClient, error
 	}
 
 	return vaultClient, nil
+}
+
+func (c *vaultClient) QuerySecretMap(path string) (map[string]interface{}, error) {
+	secret, err := c.apiClient.Logical().Read(path)
+
+	if err != nil {
+		return nil, err
+	}
+	if secret == nil {
+		return nil, fmt.Errorf("path '%s' is not found", path)
+	}
+
+	return secret.Data, nil
 }
 
 func (c *vaultClient) QuerySecret(path string, field string) (string, error) {

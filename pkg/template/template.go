@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"github.com/Masterminds/sprig"
 	"github.com/actano/vault-template/pkg/api"
+	"os"
+	"strings"
 	"text/template"
 )
 
@@ -18,14 +20,15 @@ func NewVaultTemplateRenderer(vaultToken, vaultEndpoint string) (*VaultTemplateR
 		return nil, err
 	}
 
-    return &VaultTemplateRenderer{
-        vaultClient: vaultClient,
+	return &VaultTemplateRenderer{
+		vaultClient: vaultClient,
 	}, nil
 }
 
 func (v *VaultTemplateRenderer) RenderTemplate(templateContent string) (string, error) {
 	funcMap := template.FuncMap{
-		"vault": v.vaultClient.QuerySecret,
+		"vault":    v.vaultClient.QuerySecret,
+		"vaultMap": v.vaultClient.QuerySecretMap,
 	}
 
 	tmpl, err := template.
@@ -40,9 +43,21 @@ func (v *VaultTemplateRenderer) RenderTemplate(templateContent string) (string, 
 
 	var outputBuffer bytes.Buffer
 
-	if err := tmpl.Execute(&outputBuffer, nil); err != nil {
+	envMap := envToMap()
+	if err := tmpl.Execute(&outputBuffer, envMap); err != nil {
 		return "", err
 	}
 
 	return outputBuffer.String(), nil
+}
+
+func envToMap() map[string]string {
+	envMap := map[string]string{}
+
+	for _, v := range os.Environ() {
+		splitV := strings.Split(v, "=")
+		envMap[splitV[0]] = splitV[1]
+	}
+
+	return envMap
 }

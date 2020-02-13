@@ -24,18 +24,65 @@ A [docker image is availabe on Dockerhub.](https://hub.docker.com/r/rplan/vault-
 
 ## Template
 
-The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism. `vault-env` provides a special function for specifying secrets in the template:
+First of all, suppose that the secret was created with `vault write secret/mySecret name=john password=secret`.
+
+The templates will be rendered using the [Go template](https://golang.org/pkg/text/template/) mechanism.
+
+Currently vault-template can render two functions:
+- `vault`
+- `vaultMap`
+
+Also it is possible to use environment variables like `{{ .STAGE }}`.
+
+The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
 
 ```gotemplate
 mySecretName = {{ vault "secret/mySecret" "name" }}
 mySecretPassword = {{ vault "secret/mySecret" "password" }}
 ```
 
-The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
-
-If the secret was created with `vault write secret/mySecret name=john password=secret` the resulting file would be:
-
 ```text
 mySecretName = john
 mySecretPassword = secret
+```
+
+The `vaultMap` function takes one string parameter which specify the path to the secret to return.
+
+```gotemplate
+{{ range $name, $secret := vaultMap "secret/mySecret"}}
+{{ $name }}: {{ $secret }}
+{{- end }}
+```
+
+```text
+name: john
+password: secret
+```
+
+More real example:
+
+```gotemplate
+---
+# Common vars
+{{- $customer    := .CUSTOMER }}
+{{- $stage       := .STAGE }}
+{{- $project     := .PROJECT }}
+{{- $postgres    := print "kv/data/" $customer "/" $stage "/" $project "/postgres" }}
+{{- $postgresMap := vaultMap $postgres }}
+
+postgresql:
+  postgresqlUsername: {{ $postgresMap.data.user }}
+  postgresqlPassword: {{ $postgresMap.data.password }}
+  postgresqlDatabase: {{ $postgresMap.data.db }}
+
+app:
+  postgres:
+{{ range $name, $secret := $postgresMap }}
+    {{ $name }}: {{ $secret }}
+{{- end }}
+```
+
+And command that use this template in kubernetes:
+```
+CUSTOMER=internal STAGE=test PROJECT=myprj vault-template -o values.yaml -t values.tmpl -v "http://vault.default.svc.cluster.local:8200" -f token
 ```

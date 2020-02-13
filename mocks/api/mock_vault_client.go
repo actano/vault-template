@@ -32,6 +32,15 @@ func (m *MockVaultClient) EXPECT() *MockVaultClientMockRecorder {
 	return m.recorder
 }
 
+// QuerySecretMap mocks base method
+func (m *MockVaultClient) QuerySecretMap(arg0 string) (map[string]interface{}, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "QuerySecretMap", arg0)
+	ret0, _ := ret[0].(map[string]interface{})
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
 // QuerySecret mocks base method
 func (m *MockVaultClient) QuerySecret(arg0, arg1 string) (string, error) {
 	m.ctrl.T.Helper()
@@ -45,4 +54,10 @@ func (m *MockVaultClient) QuerySecret(arg0, arg1 string) (string, error) {
 func (mr *MockVaultClientMockRecorder) QuerySecret(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QuerySecret", reflect.TypeOf((*MockVaultClient)(nil).QuerySecret), arg0, arg1)
+}
+
+// QuerySecretMap indicates an expected call of QuerySecretMap
+func (mr *MockVaultClientMockRecorder) QuerySecretMap(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "QuerySecretMap", reflect.TypeOf((*MockVaultClient)(nil).QuerySecretMap), arg0)
 }
