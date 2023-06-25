@@ -47,14 +47,12 @@ func (c *vaultClient) QuerySecretMap(path string) (map[string]interface{}, error
 }
 
 func (c *vaultClient) QuerySecret(path string, field string) (string, error) {
-	print("QuerySecret")
 	secret, err := c.apiClient.Logical().Read(path)
-	print(secret)
 	if err != nil {
 		return "", err
 	}
 
-	secretValue, ok := secret.Data.Data[field]
+	secretValue, ok := secret.Data["data"].(map[string]interface{})[field]
 
 	if !ok {
 		return "", fmt.Errorf("secret at path '%s' has no field '%s'", path, field)
