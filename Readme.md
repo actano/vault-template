@@ -5,6 +5,8 @@ Render templated config files with secrets from [HashiCorp Vault](https://www.va
 * Define a template for your config file which contains secrets at development time.
 * Use `vault-template` to render your config file template by fetching secrets from Vault at runtime.
 
+This repo has been forked to support vault API v2. 
+
 ## Usage
 
 ```text
@@ -37,8 +39,8 @@ Also it is possible to use environment variables like `{{ .STAGE }}`.
 The `vault` function takes two string parameters which specify the path to the secret and the field inside to return.
 
 ```gotemplate
-mySecretName = {{ vault "secret/mySecret" "name" }}
-mySecretPassword = {{ vault "secret/mySecret" "password" }}
+mySecretName = {{ vault "<kv-engine>/data/mySecretPath" "name" }}
+mySecretPassword = {{ vault "<kv-engine>/data/mySecretPath" "password" }}
 ```
 
 ```text
