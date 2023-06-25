@@ -43,7 +43,7 @@ func (c *vaultClient) QuerySecretMap(path string) (map[string]interface{}, error
 		return nil, fmt.Errorf("path '%s' is not found", path)
 	}
 
-	return secret.Data, nil
+	return secret.Data["data"].(map[string]interface{}), nil
 }
 
 func (c *vaultClient) QuerySecret(path string, field string) (string, error) {
