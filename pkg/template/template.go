@@ -11,9 +11,11 @@ import (
 
 type VaultTemplateRenderer struct {
 	vaultClient api.VaultClient
+	openingDelim string
+	closingDelim string
 }
 
-func NewVaultTemplateRenderer(vaultToken, vaultEndpoint string) (*VaultTemplateRenderer, error) {
+func NewVaultTemplateRenderer(vaultToken, vaultEndpoint string, openingDelim string, closingDelim string) (*VaultTemplateRenderer, error) {
 	vaultClient, err := api.NewVaultClient(vaultEndpoint, string(vaultToken))
 
 	if err != nil {
@@ -22,6 +24,8 @@ func NewVaultTemplateRenderer(vaultToken, vaultEndpoint string) (*VaultTemplateR
 
 	return &VaultTemplateRenderer{
 		vaultClient: vaultClient,
+		openingDelim: openingDelim,
+		closingDelim: closingDelim,
 	}, nil
 }
 
@@ -36,6 +40,15 @@ func (v *VaultTemplateRenderer) RenderTemplate(templateContent string) (string, 
 		Funcs(sprig.TxtFuncMap()).
 		Funcs(funcMap).
 		Parse(templateContent)
+
+	if v.openingDelim != "" && v.closingDelim != "" {
+	tmpl, err = template.
+                New("template").
+                Delims(v.openingDelim, v.closingDelim).
+                Funcs(sprig.TxtFuncMap()).
+                Funcs(funcMap).
+                Parse(templateContent)
+	}
 
 	if err != nil {
 		return "", err

@@ -14,6 +14,9 @@ var (
 		VaultTokenFile string `flag:"vault-token-file,f" env:"VAULT_TOKEN_FILE" description:"The file which contains the vault token. Also configurable via VAULT_TOKEN_FILE."`
 		TemplateFile   string `flag:"template,t" env:"TEMPLATE_FILE" description:"The template file to render. Also configurable via TEMPLATE_FILE."`
 		OutputFile     string `flag:"output,o" env:"OUTPUT_FILE" description:"The output file. Also configurable via OUTPUT_FILE."`
+                OpeningDelim   string `flag:"opening-delim,s" env:"OPENING_DELIM" description:"Optional overwrite of the go template opening delimiter. The default is {{."`
+                ClosingDelim   string `flag:"closing-delim,e" env:"CLOSING_DELIM" description:"Optional overwrite of the go template closing delimiter. The default is }}."`
+		
 	}{}
 )
 
@@ -52,7 +55,7 @@ func main() {
 		log.Fatalf("Unable to read vault token file: %s", err)
 	}
 
-	renderer, err := template.NewVaultTemplateRenderer(string(vaultToken), cfg.VaultEndpoint)
+	renderer, err := template.NewVaultTemplateRenderer(string(vaultToken), cfg.VaultEndpoint, cfg.OpeningDelim, cfg.ClosingDelim)
 
 	if err != nil {
 		log.Fatalf("Unable to create renderer: %s", err)
