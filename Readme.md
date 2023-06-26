@@ -11,8 +11,10 @@ This repo has been forked to support vault API v2. Another feature that has been
 
 ```text
 Usage of ./vault-template:
-  -e, --closing-delim string      Optional overwrite of the go template closing delimiter. Also configurable via CLOSING_DELIM. The default is }}.
-  -s, --opening-delim string      Optional overwrite of the go template opening delimiter. Also configurable via OPENING_DELIM. The default is {{.
+  -e, --closing-delim string      Optional overwrite of the go template closing delimiter. 
+                                  Also configurable via CLOSING_DELIM. The default is }}.
+  -s, --opening-delim string      Optional overwrite of the go template opening delimiter. 
+                                  Also configurable via OPENING_DELIM. The default is {{.
   -o, --output string             The output file.
                                   Also configurable via OUTPUT_FILE.
   -t, --template string           The template file to render.
