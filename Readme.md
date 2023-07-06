@@ -5,8 +5,6 @@ Render templated config files with secrets from [HashiCorp Vault](https://www.va
 * Define a template for your config file which contains secrets at development time.
 * Use `vault-template` to render your config file template by fetching secrets from Vault at runtime.
 
-This repo has been forked to support vault API v2. Another feature that has been added is the option to override the default go template delimiters, in case you wish to render a file which already uses another templating language. (e.g ansible inventory file).
-
 ## Usage
 
 ```text
@@ -25,6 +23,7 @@ Usage of ./vault-template:
   -f, --vault-token-file string   The file which contains the vault token.
                                   Also configurable via VAULT_TOKEN_FILE.                                
 ```
+A [docker image is availabe on Dockerhub.](https://hub.docker.com/r/rplan/vault-template)
 
 ## Template
 
