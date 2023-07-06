@@ -1,4 +1,4 @@
-module github.com/nikita698/vault-template
+module github.com/actano/vault-template
 
 go 1.18
 
@@ -6,7 +6,7 @@ require (
 	github.com/Luzifer/rconfig v2.2.0+incompatible
 	github.com/Masterminds/semver v1.4.2
 	github.com/Masterminds/sprig v2.17.1+incompatible
-	github.com/nikita698/vault-template v0.0.0-20200213083019-91d79a4a24ad
+	github.com/actano/vault-template v0.0.0-20200213083019-91d79a4a24ad
 	github.com/aokoli/goutils v1.1.0
 	github.com/golang/mock v1.2.0
 	github.com/golang/snappy v0.0.0-20180518054509-2e65f85255db

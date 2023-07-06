@@ -3,7 +3,7 @@ package template
 import (
 	"bytes"
 	"github.com/Masterminds/sprig"
-	"github.com/nikita698/vault-template/pkg/api"
+	"github.com/actano/vault-template/pkg/api"
 	"os"
 	"strings"
 	"text/template"
