@@ -1,5 +1,5 @@
 # `vault-template`
-
+Responsible: #DevOps
 Render templated config files with secrets from [HashiCorp Vault](https://www.vaultproject.io/). Inspired by [vaultenv](https://github.com/channable/vaultenv).
 
 * Define a template for your config file which contains secrets at development time.
